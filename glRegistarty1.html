@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GL Account Reminder System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e3a5f;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .form-section {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 6px;
+            border-left: 4px solid #1e3a5f;
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e3a5f;
+            font-size: 14px;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1e3a5f;
+            box-shadow: 0 0 4px rgba(30, 58, 95, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-add:hover {
+            background-color: #218838;
+        }
+
+        .btn-reset {
+            background-color: #6c757d;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-reset:hover {
+            background-color: #5a6268;
+        }
+
+        .table-section {
+            margin-top: 30px;
+        }
+
+        .table-section h2 {
+            color: #1e3a5f;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        thead {
+            background-color: #1e3a5f;
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .status-expired {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .countdown {
+            font-weight: 600;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .btn-copy {
+            background-color: #007bff;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-remove {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-remove:hover {
+            background-color: #c82333;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .notification-permission {
+            background-color: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .notification-permission.show {
+            display: block;
+        }
+
+        .notification-permission button {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 16px;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+
+        .notification-permission button:hover {
+            background-color: #0b7dda;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-wrapper {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            button {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+             #message {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #f0f0f0;
+      color: #333;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-size: 16px;
+      display: none; /* hidden by default */
+      transition: opacity 0.5s ease; /* for fade effect */
+    }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>GL Account Reminder System</h1>
+
+        <div id="notificationPrompt" class="notification-permission">
+            <span>Enable notifications to receive alerts when GL registrations expire</span>
+            <button onclick="requestNotificationPermission()">Enable Notifications</button>
+        </div>
+
+        <div class="form-section">
+            <form id="glForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="glAccount">GL Account</label>
+                        <input 
+                            type="text" 
+                            id="glAccount" 
+                            placeholder="Format: xx-xx-yyy-xxx-xxxxxxx" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select id="role" required>
+                            <option value="">-- Select Role --</option>
+                            <option value="Teller">Teller</option>
+                            <option value="Chief Cashier">Chief Cashier</option>
+                            <option value="Manager">Manager</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="branch">Branch</label>
+                        <select id="branch" required>
+                            <option value="">-- Select Branch --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description / Note</label>
+                    <textarea 
+                        id="description" 
+                        placeholder="Enter any notes or description for this GL registration"
+                    ></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-add">Add Registration</button>
+                    <button type="reset" class="btn-reset">Clear Form</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-section">
+            <h2>Active Registrations</h2>
+            <div class="table-wrapper">
+                <table id="registrationsTable">
+                    <thead>
+                        <tr>
+                            <th>GL Account</th>
+                            <th>Role</th>
+                            <th>Branch</th>
+                            <th>Description</th>
+                            <th>Created Time</th>
+                            <th>Status</th>
+                            <th>Time Left / Elapsed</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registrationsBody">
+                        <tr>
+                            <td colspan="8" class="empty-message">No registrations yet. Add one to get started.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="copied">
+            Copied
+        </div>
+    </div>
+
+    <!-- Audio for notification sound -->
+    <audio id="alertSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+
+    <script>
+        // Comprehensive branch data with codes
+        const branchData = {
+            '1': 'BOLE BRANCH',
+            '2': 'HAYAHULET MAZORIA BRANCH',
+            '3': 'AMEDE GEBEYA BRANCH',
+            '4': 'KALITY BRANCH',
+            '5': 'GENET BRANCH',
+            '6': 'HAWASSA BRANCH',
+            '7': 'BAHRDAR BRANCH',
+            '8': 'ADAMA BRANCH',
+            '9': 'LEGEHAR BRANCH',
+            '10': 'HOSSANA BRANCH',
+            '11': 'MEGENAGNA BRANCH',
+            '12': 'GONDAR BRANCH',
+            '13': 'DIR TERA BRANCH',
+            '14': 'DESSIE BRANCH',
+            '15': 'MEKELLE BRANCH',
+            '16': 'MESHUALKIA BRANCH',
+            '17': 'SHASHEMENE BRANCH',
+            '18': 'BISHOFTU RANCH',
+            '19': 'ALEMGENA BRANCH',
+            '20': 'JIMMA BRANCH',
+            '21': 'TEKLEHAIMANOT BRANCH',
+            '22': 'KERA BRANCH',
+            '23': 'SARIS GUMURUK BRANCH',
+            '24': 'WOLAITA BRANCH',
+            '25': 'ARBAMINCH BRANCH',
+            '26': 'WOLO SEFER BRANCH',
+            '27': 'MERI BRANCH',
+            '28': 'FLAMINGO BRANCH',
+            '29': 'MIZAN TEFERI BRANCH',
+            '30': 'DEBRE MARKOS BRANCH',
+            '31': 'SHIRE ENDASILASSIE BRANCH',
+            '32': 'MESALEMIA BRANCH',
+            '33': 'JEMO BRANCH',
+            '34': 'DIRE DAWA BRANCH',
+            '35': 'GERJI MEBRAT HAYLE BRANCH',
+            '36': 'LAFITO BRANCH',
+            '37': 'BOLE MEDHANIALEM BRANCH',
+            '38': 'NEKEMETE BRANCH',
+            '39': 'BETHEL BRANCH',
+            '40': 'DUKEM BRANCH',
+            '41': 'AMBO BRANCH',
+            '42': 'KOTEBE BRANCH',
+            '43': 'ADEY ABEBA BRANCH',
+            '44': 'SHASHEMENE ARADA BRANCH',
+            '45': 'AYER TENA GIRAR BRANCH',
+            '46': 'MESKEL FLOWER BRANCH',
+            '47': 'WOLETE BRANCH',
+            '48': 'WOLISO BRANCH',
+            '49': 'EMPEROR TEWODROS BRANCH',
+            '50': 'ASSOSA BRANCH',
+            '51': 'ARAB SEFER BRANCH',
+            '52': 'GULLELE BRANCH',
+            '53': 'GAMBELLA BRANCH',
+            '54': 'HUMERA BRANCH',
+            '55': 'KIDEST MARIAM BRANCH',
+            '56': 'LIDETA BRANCH',
+            '57': 'PIASSA BRANCH',
+            '58': 'SIDIST KILO BRANCH',
+            '59': 'BELAY ZELEKE BRANCH',
+            '60': 'BALDERAS BRANCH',
+            '61': 'ATOBISTERA BRANCH',
+            '62': 'GERJI BRANCH',
+            '63': 'BOLE MICHAEL BRANCH',
+            '64': 'KIRKOS BRANCH',
+            '65': 'MEHAL WOLLOSEFER BRANCH',
+            '66': 'AKAKI BRANCH',
+            '67': 'HAWASSA MENAHERIA BRANCH',
+            '68': 'GISHE ABAY BRANCH',
+            '69': 'ADAMA ARADA BRANCH',
+            '70': 'ADIHAKE BRANCH',
+            '71': 'JIGJIGA BRANCH',
+            '72': 'TORBAN GERBA BRANCH',
+            '73': 'GOTERA BRANCH',
+            '74': 'DEBRE BIRHAN BRANCH',
+            '75': 'KEBENA BRANCH',
+            '76': 'GOJAM BERENDA BRANCH',
+            '77': 'YERER BER BRANCH',
+            '78': 'SEBETA BRANCH',
+            '79': 'ENKULAL FABRICA BRANCH',
+            '80': 'HANNA MARIAM BRANCH',
+            '81': 'DEMBIDOLLO BRANCH',
+            '82': 'GURD SHOLA BRANCH',
+            '83': 'SHIROMEDA BRANCH',
+            '84': 'LEBU BRANCH',
+            '85': 'SHINSHICHO BRANCH',
+            '86': 'ASSELA BRANCH',
+            '87': 'GEFERSA NANO BRANCH',
+            '88': 'MEHAL ADAMA BRANCH',
+            '89': 'SEMIT CONDOMINIUM BRANCH',
+            '90': 'SHASHEMENE AWASHO BRANCH',
+            '91': 'AIRPORT BRANCH',
+            '92': 'ADDISU GEBEYA BRANCH',
+            '93': 'BOLE BULBULA BRANCH',
+            '94': 'SHALA SUB BRANCH',
+            '95': 'BENSSA DAYE BRANCH',
+            '96': 'SEFERE SELAM BRANCH',
+            '97': 'OLD AIRPORT BRANCH',
+            '98': 'DURAME BRANCH',
+            '99': 'FURRY BRANCH',
+            '100': 'WOSSEN BRANCH',
+            '101': 'JIMMA ABA JIFFAR BRANCH',
+            '102': 'HALABA KULITO BRANCH',
+            '103': 'WOLDIA BRANCH',
+            '104': 'SIM BRANCH',
+            '105': 'WORLD VISION BRANCH',
+            '106': 'ADIGRAT BRANCH',
+            '107': 'ADAWA BRANCH',
+            '108': 'AXUM BRANCH',
+            '109': 'HIWOT BRANCH',
+            '110': 'WUKRO BRANCH',
+            '111': 'ALAMATA BRANCH',
+            '112': 'TOSSA BRANCH',
+            '113': 'AYAT BRANCH',
+            '114': 'HAYAHULET GEBBREL BRANCH',
+            '115': 'BERECHA ADAMA BRANCH',
+            '116': 'SARBET BRANCH',
+            '117': 'HABETE GORGIS BRANCH',
+            '118': 'ALETA WENDO BRANCH',
+            '119': 'SHONE BRANCH',
+            '120': 'MOJO BRANCH',
+            '121': 'BODITI BRANCH',
+            '122': 'LEM MEGENAGNA BRANCH',
+            '123': 'KOMBOLLCHA BRANCH',
+            '124': 'WUHA LIMAT BRANCH',
+            '125': 'MEKI BRANCH',
+            '126': 'DIRE DAWA SABIAN SUB BRANCH',
+            '127': 'URAEL BRANCH',
+            '128': 'TANA BRANCH',
+            '129': 'BUTAJIRA BRANCH',
+            '130': 'LOGIA SEMERA BRANCH',
+            '131': 'SUMMIT MEDHANE ALEM BRANCH',
+            '132': 'BEKELO BET BRANCH',
+            '133': 'GIMBICHO BRANCH',
+            '134': 'GOMBORA BRANCH',
+            '135': 'SAWULA BRANCH',
+            '136': 'JINKA BRANCH',
+            '137': 'MEKANISA BRANCH',
+            '138': 'SULULTA BRANCH',
+            '139': 'BATU BRANCH',
+            '140': 'DAWERO BRANCH',
+            '141': 'HARAR BRANCH',
+            '142': 'HOLETA BRANCH',
+            '143': 'FICHE BRANCH',
+            '144': 'BURAYU BRANCH',
+            '145': 'KARA ALO BRANCH',
+            '146': 'GEBREGURACHA BRANCH',
+            '147': 'WULKITE BRANCH',
+            '148': 'BEKOJI BRANCH',
+            '149': 'CENIMA RAS BRANCH',
+            '150': 'BESHALE BRANCH',
+            '151': 'CMC MICHEL BRANCH',
+            '152': 'YEKA ABADO BRANCH',
+            '153': 'IMPERIAL BRANCH',
+            '154': 'AREKA BRANCH',
+            '155': 'TULU DIMTU BRANCH',
+            '156': 'ADI HAWISI BRANCH',
+            '157': 'GIMBI BRANCH',
+            '158': 'NEDJO BRANCH',
+            '159': 'HADERO BRANCH',
+            '160': 'BONGA BRANCH',
+            '161': 'OLOMPIA BRANCH',
+            '162': 'TEPPI BRANCH',
+            '163': 'BEDELE BRANCH',
+            '164': 'METTU BRANCH',
+            '165': 'ABAY MADO BRANCH',
+            '166': 'DILLA BRANCH',
+            '167': 'ARSI NEGELE BRANCH',
+            '168': 'MEHAL SUMMIT BRANCH',
+            '169': 'WONDO_GENET BRANCH',
+            '170': 'BULE HORA BRANCH',
+            '171': 'CHIRO BRANCH',
+            '172': 'ENDERASSIE BRANCH',
+            '173': 'MIERAB MERKATO BRANCH',
+            '174': 'GEJA SEFER BRANCH',
+            '175': 'MERKATO HUNGNAW MERA BRANCH',
+            '176': 'MEKELLE HAWZEN ADEBAYAYE BRANCH',
+            '177': 'BULBULA MARIAM MAZORIA BRANCH',
+            '178': 'NIFAS SILK BRANCH',
+            '180': 'BALE ROBE BRANCH',
+            '181': 'GINIR BRANCH',
+            '182': 'METHARA BRANCH',
+            '183': 'MENDI BRANCH',
+            '184': 'AYAT ZONE 3 BRANCH',
+            '185': 'LAMBERET BRANCH',
+            '186': 'SHAKISO BRANCH',
+            '187': 'ADAMA BOLE BRANCH',
+            '188': 'ATLAS BRANCH',
+            '189': 'FERENSAY GURARA BRANCH',
+            '190': 'CHANCHIO BRANCH',
+            '191': 'SIGNAL BRANCH',
+            '192': 'ALULA ABA NEGA',
+            '193': 'BOLE ARABSA BRANCH',
+            '194': 'BISRATE GEBREAL',
+            '195': 'KOBO BRANCH',
+            '196': 'KASANCHIS BRANCH',
+            '197': 'MEKANISSA KORE',
+            '198': 'ANGER-GUTE BRANCH',
+            '199': 'AYER TENA ADEBABAYE BRANCH',
+            '200': 'AYAT 72 BRANCH',
+            '201': 'MERKATO SHERATERA BRANCH',
+            '202': 'SHOA ROBIT BRANCH',
+            '203': 'HOSSANA MOBILE BRANCH',
+            '204': 'HAILE GARMENT BRANCH',
+            '205': 'HIRNA BRANCH',
+            '206': 'DEBRETABOR BRANCH',
+            '207': 'BAKO BRANCH',
+            '208': 'JIJIGA KALI BRANCH',
+            '209': 'LEBU MEBRAT BRANCH',
+            '210': 'DOLLO ADO BRANCH',
+            '211': 'KOLFE ATENA TERA BRANCH',
+            '212': 'YESHI DEBELLE BRANCH',
+            '213': 'ALEM BANK BRANCH',
+            '214': 'DAMBOYA BRANCH',
+            '215': 'SECHA ARBAMINCH BRANCH',
+            '216': 'GIDOLE BRANCH',
+            '217': 'NEGELE BRANCH',
+            '218': 'SIBU-SERI BRANCH',
+            '219': 'SHAMBU BRANCH',
+            '220': 'HAILE GEBRESELASSIE HIGHWAY BRANCH',
+            '221': 'MOYALE BRANCH',
+            '222': 'ADAMA-RAS BRANCH',
+            '223': 'CHENCHA BRANCH',
+            '224': 'MEXICO BRANCH',
+            '225': 'BUIE BRANCH',
+            '226': 'GELAN CONDOMINIUM BRANCH',
+            '227': 'GORO BRANCH',
+            '228': 'SUMMIT SAFARI BRANCH',
+            '229': 'COLONEL BEZABIH PETROS ADEBABAY',
+            '230': 'ANFO BRANCH',
+            '231': 'LIDETA FIRD BET BRANCH',
+            '232': 'GUDER BRANCH',
+            '233': 'SODO MENHARIA BRANCH',
+            '234': 'SIDAMO TERA BRANCH',
+            '235': 'MERSA BRANCH',
+            '236': 'SEKORU BRANCH',
+            '237': 'WERETA BRANCH',
+            '238': 'YIRGALEM BRANCH',
+            '239': 'DOYOGENA BRANCH',
+            '240': 'MERSA BRANCH',
+            '241': 'BULBULA 93 MAZORIA BRANCH',
+            '242': 'BISHOFTU TOURIST BRANCH',
+            '243': 'ADAMA BOKU BRANCH',
+            '244': 'JEMO MICHAEL BRANCH',
+            '245': 'GINICHI BRANCH',
+            '246': 'METTI BRANCH',
+            '247': 'ARAT KILLO BRANCH',
+            '248': 'AKAKI ALEM BANK',
+            '249': 'MEHAL GERJI',
+            '250': 'SEBATEGNA BRANCH',
+            '251': 'INJIBARA BRANCH',
+            '252': 'DANGLA BRANCH',
+            '253': 'ADAMA BOSSET BRANCH',
+            '254': 'KERA GOFA MAZORIYA',
+            '255': 'HAWASSA ATOTE BRANCH',
+            '256': 'LEGETAFO BRANCH',
+            '257': 'MEHAL HAYA HULET',
+            '258': 'GERJI UNITY BRANCH',
+            '259': 'ALETA CHUKO BRANCH',
+            '260': 'HAYAHULET ADDIS HIWOT',
+            '261': 'JEMO 2 BRANCH',
+            '262': 'ARERTI BRANCH',
+            '263': 'ALFA BRANCH',
+            '264': 'BOLE-HAYARAT BRANCH',
+            '265': 'SUMMIT 72 BRANCH',
+            '266': 'GOFA ADEBABAY',
+            '267': 'SEMIEN HOTEL',
+            '268': 'ADEYABEBA STADIUM',
+            '269': 'DAGMAWI MENELIK BRANCH',
+            '270': 'SHANTO BRANCH',
+            '271': 'DIMTU BRANCH',
+            '272': 'GUNUNO BRANCH',
+            '273': 'GESUBA BRANCH',
+            '274': 'FINOTE SELAM BRANCH',
+            '275': 'KURKURA BRANCH',
+            '276': 'GARA GODO BRANCH',
+            '277': 'KOTEBE COLLEGE',
+            '278': 'HUMBO BRANCH',
+            '279': 'BIRIBIR BRANCH',
+            '280': 'BEKLOSEGNO BRANCH',
+            '281': 'BELE AWASSA BRANCH',
+            '282': 'BABILE BRANCH',
+            '283': 'CHAGNI BRANCH',
+            '284': 'BURIE BRANCH',
+            '285': 'AGARO BRANCH',
+            '286': 'MIZAN AMAN BRANCH',
+            '287': 'SEBARA BABUR BRANCH',
+            '288': 'GONDAR MARAKI NEGA BRANCH',
+            '289': 'BICHENA BRANCH',
+            '290': 'QETTERO BRANCH',
+            '291': 'SHEGOLE BRANCH',
+            '292': 'SHENO BRANCH',
+            '293': 'SAGURE BRANCH',
+            '294': 'ITEYA BRANCH',
+            '295': 'SHAFFETA BRANCH',
+            '296': 'AWASH SEBAT KILO BRANCH',
+            '297': 'ATSE ZERAYAKOB BRANCH',
+            '298': 'SHOLLA GEBEYA BRANCH',
+            '299': 'GEFERSA GUJE BRANCH',
+            '300': 'LEKU BRANCH',
+            '301': 'MELOKOZA BRANCH',
+            '302': 'HOMECHO BRANCH',
+            '303': 'LEKA BRANCH',
+            '304': 'GARMENET SEFERA BRANCH',
+            '305': 'DARA KEBADO BRANCH',
+            '306': 'DODOLA BRANCH',
+            '307': 'AYAT 49 BRANCH',
+            '308': 'ANGECHA BRANCH',
+            '309': 'LEKOMELZA BRANCH',
+            '310': 'BALE GOBA BRANCH',
+            '311': 'Coca Mazoria',
+            '312': 'ABAKORAN BRANCH',
+            '313': 'JEMO ADEBABAY BRANCH',
+            '314': 'SARIS 58 BRANCH',
+            '315': 'EUROPEAN UNION BRANCH',
+            '316': 'GORO SEFERA BRANCH',
+            '317': 'MEKANISA KOTARI BRANCH',
+            '318': 'SHUFUNE BRANCH',
+            '319': 'KETTA BRANCH',
+            '320': 'EJERE BRANCH',
+            '321': 'MUKE TURI BRANCH',
+            '322': 'BAHIL ADARASH BRANCH',
+            '323': 'DATO BRANCH',
+            '324': 'WADU BRANCH',
+            '325': 'AZEZO BRANCH',
+            '326': 'TULU BOLO BRANCH',
+            '328': 'DIRE DAWA MESKELEGNA',
+            '329': 'AGENNA BRANCH',
+            '330': 'AFRICA HIBRET BRANCH',
+            '331': 'BONOSHA BRANCH',
+            '332': 'SUMMIT BRANCH',
+            '333': 'KARA KORE BRANCH',
+            '334': 'GOFA CAMP BRANCH',
+            '335': 'SHENEN GIBE BRANCH',
+            '336': 'KELLA BRANCH',
+            '337': '18 MAZORIYA BRANCH',
+            '338': 'KOYE FICHE BRANCH',
+            '339': 'KOLLA - SHELE',
+            '340': 'SARIS ABO BRANCH',
+            '341': 'ABUWARE BRANCH',
+            '342': 'ZENEBE WORK-TABOTMADERIA',
+            '343': 'HARARHAKIM BRANCH',
+            '344': 'ADAMADEMBELA BRANCH',
+            '345': 'WASHINGTON ADEBABAY BRANCH',
+            '346': 'FIGA BRANCH',
+            '347': 'ERTU LEBU BRANCH',
+            '348': 'TEBASE BRANCH',
+            '349': 'SHASHEMENE MOBIL',
+            '350': 'JACROS BRANCH',
+            '351': 'Gelemso',
+            '352': 'ARADA BRANCH',
+            '353': 'DERARO BRANCH',
+            '354': 'HAWASSA ALAMURA BRANCH',
+            '355': 'ARSE ROBE BRANCH',
+            '356': 'DEJEN BRANCH',
+            '357': 'MERI LOKE BRANCH',
+            '358': 'SEALITE MIHRET',
+            '359': 'LAFTO MEBRAT BRANCH',
+            '360': 'MOTTA BRANCH',
+            '361': 'DEBARK BRANCH',
+            '362': 'BALE EGZIABHER BRANCH',
+            '363': 'ADA\'A BRANCH',
+            '364': 'MELKA GEFERSA BRANCH',
+            '365': 'COMMERCE BRANCH',
+            '366': 'JAWI BRANCH',
+            '367': 'DANEMA BRANCH',
+            '368': 'ARADA GIORGIS RANCH',
+            '369': 'MUDULA BRANCH',
+            '370': 'YIRGA CHEFFE BRANCH',
+            '371': 'WOLO SEFER ADEBABAY BRANCH',
+            '372': 'BULBULA BRANCH',
+            '373': 'ADOLA WOYU BRANCH',
+            '374': 'GOTERA PEPSI BRANCH',
+            '375': 'PASTOR BRANCH',
+            '376': 'ASKO BRANCH',
+            '377': 'AMERICAN GIBI BRANCH',
+            '378': 'GERJI ROBA BRANCH',
+            '379': 'KILINTO BRANCH',
+            '380': 'SENGATERA BRANCH',
+            '381': 'SODO ARADA BRANCH',
+            '382': 'ADABA BRANCH',
+            '383': 'ADET BRANCH',
+            '384': 'TULEFA BRANCH',
+            '386': 'HAWASSA REFERAL BRANCH',
+            '387': 'UKE BRANCH',
+            '388': 'DANSHA BRANCH',
+            '389': 'NIGIST ELENI BRANCH',
+            '390': 'SHURMO BRANCH',
+            '391': 'FONKO BRANCH',
+            '392': 'MEKANE SELAM BRANCH',
+            '393': 'DIMA BRANCH',
+            '394': 'SEDECHA BRANCH'
+        };
+
+        let registrations = [];
+
+        // Format code to xxx format (e.g., 1 → 001, 10 → 010, 100 → 100)
+        function formatCodeToXXX(code) {
+            return String(code).padStart(3, '0');
+        }
+
+        // Initialize branch dropdown
+        function initializeBranches() {
+            const branchSelect = document.getElementById('branch');
+            const branches = Object.entries(branchData)
+                .map(([code, name]) => ({ 
+                    code, 
+                    formattedCode: formatCodeToXXX(code),
+                    name 
+                }))
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            branches.forEach(({ code, formattedCode, name }) => {
+                const option = document.createElement('option');
+                option.value = code;
+                option.textContent = `${name} (${formattedCode})`;
+                branchSelect.appendChild(option);
+            });
+        }
+
+        // Auto-fill branch based on GL Account
+        document.getElementById('glAccount').addEventListener('input', function() {
+            const glAccount = this.value.trim();
+            const branchCode = extractBranchCode(glAccount);
+            if (branchCode && branchData[branchCode]) {
+                document.getElementById('branch').value = branchCode;
+            }
+        });
+
+        // Extract branch code from GL Account (yyy part)
+        function extractBranchCode(glAccount) {
+            const parts = glAccount.split('-');
+            if (parts.length >= 3) {
+                // Get the yyy part (3rd segment) and convert to number to remove leading zeros
+                const code = String(parseInt(parts[2], 10));
+                // Check if this code exists in branchData
+                if (branchData[code]) {
+                    return code;
+                }
+            }
+            return null;
+        }
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        document.getElementById('notificationPrompt').classList.remove('show');
+                    }
+                });
+            }
+        }
+
+        // Check if notifications can be requested
+        function checkNotificationPrompt() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                document.getElementById('notificationPrompt').classList.add('show');
+            }
+        }
+
+        // Check if GL Account is unique and not expired
+        function isGLAccountAvailable(glAccount) {
+            const existing = registrations.find(reg => reg.glAccount === glAccount);
+            if (!existing) {
+                return { available: true, message: null };
+            }
+
+            // Check if the existing entry is expired
+            const createdTime = new Date(existing.createdTime);
+            const now = new Date();
+            const diffMs = now - createdTime;
+            const diffHours = diffMs / (1000 * 60 * 60);
+
+            if (diffHours >= 1) {
+                return { available: true, message: null }; // Entry is expired, GL Account is available
+            }
+
+            return { available: false, message: `GL Account ${glAccount} is already in the queue` }; // Entry exists and is not expired
+        }
+
+        // Add new registration
+        document.getElementById('glForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const glAccount = document.getElementById('glAccount').value.trim();
+            const role = document.getElementById('role').value;
+            const branch = document.getElementById('branch').value;
+            const branchName = document.getElementById('branch').options[document.getElementById('branch').selectedIndex].text;
+            const description = document.getElementById('description').value.trim();
+
+            if (!glAccount || !role || !branch) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Check if GL Account is already in queue and not expired
+            const availability = isGLAccountAvailable(glAccount);
+            if (!availability.available) {
+                alert(availability.message);
+                return;
+            }
+
+            const registration = {
+                id: Date.now(),
+                glAccount,
+                role,
+                branch: formatCodeToXXX(branch),
+                branchName: branchName.split(' (')[0],
+                description,
+                createdTime: new Date()
+            };
+
+            registrations.push(registration);
+            saveToLocalStorage();
+            renderTable();
+            this.reset();
+            document.getElementById('branch').value = '';
+        });
+
+        // Format time
+        function formatTime(date) {
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            });
+        }
+
+        // Calculate time difference
+        function getTimeStatus(createdTime) {
+            const now = Date.now();
+            const created = createdTime.getTime();
+            const diffMs = now - created;
+            const oneHourMs = 60 * 60 * 1000;
+
+            const isActive = diffMs < oneHourMs;
+            const timeLeft = oneHourMs - diffMs;
+            const minutes = Math.floor(timeLeft / (60 * 1000));
+            const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000);
+
+            if (isActive) {
+                return {
+                    status: 'ACTIVE',
+                    display: `${minutes}m ${seconds}s`,
+                    isActive: true
+                };
+            } else {
+                const elapsedMs = diffMs - oneHourMs;
+                const elapsedMinutes = Math.floor(elapsedMs / (60 * 1000));
+                const elapsedSeconds = Math.floor((elapsedMs % (60 * 1000)) / 1000);
+                return {
+                    status: 'EXPIRED',
+                    display: `${elapsedMinutes}m ${elapsedSeconds}s ago`,
+                    isActive: false
+                };
+            }
+        }
+
+        // Show browser notification
+        function showNotification(glAccount, role, branch) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('GL Registration Expired', {
+                    body: `GL Account: ${glAccount}\nRole: ${role}\nBranch: ${branch}`,
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚠️</text></svg>'
+                });
+            }
+        }
+
+        // Play alert sound
+        function playAlertSound() {
+            const audio = document.getElementById('alertSound');
+            audio.play().catch(err => console.log('Could not play alert sound'));
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('registrationsBody');
+            tbody.innerHTML = '';
+
+            if (registrations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="empty-message">No registrations yet. Add one to get started.</td></tr>';
+                return;
+            }
+
+            const expiredIds = new Set();
+
+            registrations.forEach(reg => {
+                const timeStatus = getTimeStatus(reg.createdTime);
+                const row = document.createElement('tr');
+
+                // Check if this registration just expired
+                if (timeStatus.status === 'EXPIRED' && !expiredIds.has(reg.id)) {
+                    expiredIds.add(reg.id);
+                    showNotification(reg.glAccount, reg.role, reg.branchName);
+                    playAlertSound();
+                }
+
+                row.innerHTML = `
+                    <td><strong>${reg.glAccount}</strong></td>
+                    <td>${reg.role}</td>
+                    <td>${reg.branchName} (${reg.branch})</td>
+                    <td>${reg.description || '-'}</td>
+                    <td>${formatTime(reg.createdTime)}</td>
+                    <td>
+                        <span class="status-${timeStatus.isActive ? 'active' : 'expired'}">
+                            ${timeStatus.status}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="countdown">${timeStatus.display}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-copy" onclick="copyRegistration(${reg.id})">Copy</button>
+                            <button class="btn-remove" onclick="removeRegistration(${reg.id})">Remove</button>
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+// show copied msg
+ function showMessage(text) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.textContent = text;
+      messageDiv.style.display = "block";
+      messageDiv.style.opacity = 1;
+
+      setTimeout(() => {
+        messageDiv.style.opacity = 0;
+        setTimeout(() => messageDiv.style.display = "none", 500);
+      }, 3000);
+    }
+
+        // Copy registration
+        function copyRegistration(id) {
+            const reg = registrations.find(r => r.id === id);
+            if (reg) {
+                const copyText = reg.glAccount;
+                navigator.clipboard.writeText(copyText).then(() => {
+                   showMessage(` GL Acc. ${reg.glAccount}`)
+                }).catch(() => {
+                    showMessage("Failed to copy")
+                });
+            }
+        }
+
+        // Remove registration
+        function removeRegistration(id) {
+            registrations = registrations.filter(reg => reg.id !== id);
+            saveToLocalStorage();
+            renderTable();
+        }
+
+        // Save to localStorage
+        function saveToLocalStorage() {
+            const data = registrations.map(reg => ({
+                ...reg,
+                createdTime: reg.createdTime.toISOString()
+            }));
+            localStorage.setItem('glRegistrations', JSON.stringify(data));
+        }
+
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            const data = localStorage.getItem('glRegistrations');
+            if (data) {
+                const parsed = JSON.parse(data);
+                registrations = parsed.map(reg => ({
+                    ...reg,
+                    createdTime: new Date(reg.createdTime)
+                }));
+            }
+        }
+
+        // Update table every second
+        setInterval(() => {
+            if (registrations.length > 0) {
+                renderTable();
+            }
+        }, 1000);
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            initializeBranches();
+            loadFromLocalStorage();
+            checkNotificationPrompt();
+            renderTable();
+        });
+    </script>
+</body>
+</html>
